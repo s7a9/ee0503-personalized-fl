@@ -31,6 +31,9 @@ train_loader = DataLoader(train_set,
                                 shuffle=True,
                                 batch_size=batch_size)
 val_loader = DataLoader(val_set,shuffle=False,batch_size=batch_size)
+
+data = (train_set, val_set)
+data_loader = (train_loader, val_loader)
     
 ##########################################
 
@@ -44,7 +47,7 @@ if Ptype == 'client':
     # optimizer = torch.optim.SGD(Model.parameters,lr=0.1, momentum=0.9)
     optimizer = torch.optim.Adam(Model.parameters,lr=0.03, betas=(0.9, 0.99))
     idnum = ID
-    client = Client(Model, optimizer, train_set, idnum, batch_size=batch_size, train_frac=0.8)
+    client = Client(Model, optimizer, data, data_loader, idnum, batch_size=batch_size, train_frac=0.8)
 
 if Ptype == 'server':
     ##########################################
@@ -56,4 +59,4 @@ if Ptype == 'server':
     # optimizer = torch.optim.SGD(Model.parameters,lr=0.1, momentum=0.9)
     optimizer = torch.optim.Adam(Model.parameters,lr=0.03, betas=(0.9, 0.99))
     idnum = ID
-    server = Server(Model, optimizer, val_set, idnum, batch_size=batch_size, train_frac=0.8)
+    server = Server(Model, optimizer, val_set, val_loader, idnum, batch_size=batch_size, train_frac=0.8)

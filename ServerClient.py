@@ -9,9 +9,10 @@ from Clustering import *
 device = "cuda" if torch.cuda.is_available() else "cpu"
         
 class FederatedTrainingDevice(object):
-    def __init__(self, model_fn, data):
+    def __init__(self, model_fn, train_data, val_data):
         self.model = model_fn().to(device)
-        self.data = data
+        self.train_data = train_data
+        self.val_data = val_data
         self.W = {key : value for key, value in self.model.named_parameters()}
 
 
@@ -20,17 +21,12 @@ class FederatedTrainingDevice(object):
   
   
 class Client(FederatedTrainingDevice):
-    def __init__(self, model_fn, optimizer_fn, data, idnum, batch_size=128, train_frac=0.8):
+    def __init__(self, model_fn, optimizer_fn, data, data_loader, idnum, batch_size=128):
         super().__init__(model_fn, data)  
         self.optimizer = optimizer_fn(self.model.parameters())
             
-        self.data = data
-        n_train = int(len(data)*train_frac)
-        n_eval = len(data) - n_train 
-        data_train, data_eval = torch.utils.data.random_split(self.data, [n_train, n_eval])
-
-        self.train_loader = DataLoader(data_train, batch_size=batch_size, shuffle=True)
-        self.eval_loader = DataLoader(data_eval, batch_size=batch_size, shuffle=False)
+        self.train_data, self.val_data = data
+        self.train_loader, self.eval_loader = data_loader
         
         self.id = idnum
         
@@ -52,9 +48,9 @@ class Client(FederatedTrainingDevice):
     
     
 class Server(FederatedTrainingDevice):
-    def __init__(self, model_fn, data):
+    def __init__(self, model_fn, data, data_loader):
         super().__init__(model_fn, data)
-        self.loader = DataLoader(self.data, batch_size=128, shuffle=False)
+        self.loader = data_loader
         self.model_cache = []
     
     def select_clients(self, clients, frac=1.0):
