@@ -11,7 +11,7 @@ Personalized Federated Learning
 
 
 ## 聚类和平均模块
-Guoqinlu：安排了基本的模块暂时
+Guoqinlu：安排了基本的模块暂时，model在Model中
 
 ## 传输
 Guoqinlu：main里面加入了相应的IP等等的预制，可以参考着改一下；
