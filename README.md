@@ -9,6 +9,14 @@ Personalized Federated Learning
 4. 服务器 把接收到的模型+梯度存到每个分组对应的数据结构里
 5. 服务器 当一个分组的client全部训练完的时候，发送给聚类和平均的模块。
 
+## 模块
+
+1. ServerClient.py: 服务端和端的类
+2. Clustering.py: 聚类
+3. Model.py: 模型
+4. Train_device.py: 模型精度测量
+5. Dataset.py: 数据接口（加入了noniid的参数，但是没有实现）
+6. main.py: 主
 
 ## 聚类和平均模块
 Guoqinlu：安排了基本的模块暂时，model在Model中
@@ -18,4 +26,6 @@ Guoqinlu：main里面加入了相应的IP等等的预制，可以参考着改一
 
 ## noniid
 Guoqinlu: main里面的dataload，可以实现在dataset.py里，具体我在助教的基础上加了一个noniid=True参数；
+
+
 
