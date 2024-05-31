@@ -27,5 +27,8 @@ Guoqinlu：main里面加入了相应的IP等等的预制，可以参考着改一
 ## noniid
 Guoqinlu: main里面的dataload，可以实现在dataset.py里，具体我在助教的基础上加了一个noniid=True参数；
 
+## Requirements
 
-
+python-socketio
+websocket-client
+eventlet
