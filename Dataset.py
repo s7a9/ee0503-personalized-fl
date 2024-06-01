@@ -24,11 +24,6 @@ def build_data(root="../data/cifar-100-python",is_train=True):
         train_dict = pkl.load(fo, encoding='bytes')
     with open(test_file, 'rb') as fo:
         test_dict = pkl.load(fo, encoding='bytes')
-    print(train_dict.keys())
-    print(train_dict[b"fine_labels"].__len__())
-    print(train_dict[b"data"].shape)
-    print(test_dict[b"fine_labels"].__len__())
-    print(test_dict[b"data"].shape)
     if is_train:
         train_data, train_labels = preprocess(train_dict[b"data"], train_dict[b"fine_labels"])
     else:
