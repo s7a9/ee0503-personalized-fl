@@ -2,6 +2,7 @@ import random
 import torch
 from torch.utils.data import DataLoader
 import numpy as np
+from tqdm import tqdm
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -9,7 +10,7 @@ def train_op(model, loader, optimizer, epochs=1):
     model.train()  
     for ep in range(epochs):
         running_loss, samples = 0.0, 0
-        for x, y in loader: 
+        for x, y in tqdm(loader, desc=f"Epoch {ep+1}/{epochs}"): 
             x, y = x.to(device), y.to(device)
             optimizer.zero_grad()
 
@@ -20,6 +21,7 @@ def train_op(model, loader, optimizer, epochs=1):
             loss.backward()
             optimizer.step()  
 
+        print(f"Epoch {ep+1}/{epochs}, Loss: {running_loss / samples:.4f}")
     return running_loss / samples
       
 def eval_op(model, loader):

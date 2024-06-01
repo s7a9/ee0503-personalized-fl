@@ -28,7 +28,7 @@ class ClientGroup:
     def start_train(self, data):
         self.ready_clients.clear()
         self.client_data.clear()
-        print('Start train:', data, 'on', self.clients)
+        print('Start train on', self.clients)
         self.sio.emit('start_train', 'start_train', to= list(self.clients))
 
 
@@ -64,7 +64,7 @@ class NetworkServer:
         
         @sio.on('train_complete')
         def on_train_complete(sid, data):
-            print('Device train complete', sid, data)
+            print('Device train complete', sid)
             group = self.find_client_group(sid)
             if group is None:
                 print('Client not found')
