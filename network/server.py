@@ -70,7 +70,7 @@ class NetworkServer:
                 print('Client not found')
                 return
             if group.client_be_ready(sid, data):
-                sio.start_background_task(group_complete_callback, group)
+                sio.start_background_task(group_complete_callback, self, group)
         
         self.sio = sio
         self.app = app
