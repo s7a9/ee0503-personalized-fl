@@ -15,23 +15,35 @@ parser.add_argument('--host', type=str, default="localhost")
 parser.add_argument('-p', type=int, default="8192")
 parser.add_argument("-k", type=int, default=2)
 parser.add_argument("--round", type=int, default=5)
+parser.add_argument('--noniid', type=str, default="off")
+parser.add_argument('--clustering', type=str, default="off")
 args = parser.parse_args()
 ID = args.ID
 Host_IP = args.host
 Host_Port = args.p
 Ptype = args.type
+if args.clustering == "on":
+    split = True
+else:
+    split = False
+
+if args.noniid == "on":
+    noniid = True
+else:
+    noniid = False
+
 
 batch_size = 128
 EPS_1 = 0.4
 EPS_2 = 1.6
-split = True
+
 ##########################################
 # noniid分布处理 # 陈
 
 # dataset
 root="../data/cifar-100-python"
-train_set = Cifar100Dataset(root=root, is_train=True, noniid = True) # 引入了noniid参数
-val_set = Cifar100Dataset(root=root, is_train=False, noniid = True)
+train_set = Cifar100Dataset(root=root, is_train=True, noniid = noniid) # 引入了noniid参数
+val_set = Cifar100Dataset(root=root, is_train=False)
     
 train_loader = DataLoader(train_set,
                                 shuffle=True,
