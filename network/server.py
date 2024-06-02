@@ -39,7 +39,7 @@ class NetworkServer:
         create_data_callback,
         ) -> None:
         # Creating a new Socket.IO server
-        sio = socketio.Server()
+        sio = socketio.Server(max_http_buffer_size=10**8)
         app = socketio.WSGIApp(sio)
         self.groups = {
             0: ClientGroup(0, sio) # the group for unlauched clients
@@ -58,7 +58,7 @@ class NetworkServer:
             for gid, group in self.groups.items():
                 if sid in group.clients:
                     group.remove_client(sid)
-                    if len(group.clients) == 0:
+                    if len(group.clients) == 0 and gid != 0:
                         del self.groups[gid]
                     break
         
@@ -116,6 +116,10 @@ class NetworkServer:
                 elif data == 'h':
                     print('l: launch new group')
                     print('p: print groups')
+                    print('q: quit')
+                elif data == 'q':
+                    print('exit console environment')
+                    break
                 eventlet.sleep(0.1)
     
     def start(self, port: int, host: str= 'localhost'):
