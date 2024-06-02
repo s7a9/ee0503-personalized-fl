@@ -24,6 +24,7 @@ Ptype = args.type
 batch_size = 128
 EPS_1 = 0.4
 EPS_2 = 1.6
+split = True
 ##########################################
 # noniid分布处理 # 陈
 
@@ -91,21 +92,17 @@ elif Ptype == 'server':
         for sids, datas in group.client_data.items():
             clients.append(bytes_to_client(datas, optimizer, data_set, data_loader, idnum))
             matchs.append(sids)
-        if new_group != None:
-            for sids, datas in new_group.client_data.items():
-                clients.append(bytes_to_client(datas, optimizer, data_set, data_loader, idnum))
-                matchs.append(sids)
 
         # Example: model[0] = bytes_to_model(group.client_data[0]['model'])
         # TODO 2: Check the necessity of clustering
-        split = True
         # clients = []
+        global split
         new_group = None
+        cluster_indices = [np.arange(len(clients)).astype("int")]
+        client_clusters = [[clients[i] for i in idcs] for idcs in cluster_indices]
 
         # TODO 3: If necessary, call server.split_group(group, clients) to split the group
         if split:
-            cluster_indices = [np.arange(len(clients)).astype("int")]
-            client_clusters = [[clients[i] for i in idcs] for idcs in cluster_indices]
             participating_clients = server.select_clients(clients, frac=1.0)
             similarities = server.compute_pairwise_similarities(clients)
             cluster_indices_new = []
@@ -133,6 +130,8 @@ elif Ptype == 'server':
             # print(acc_clients)
             if len(client_clusters) == 2:
                 new_group = netserver.split_group(group, sid_clusters[1])
+            print("哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈")
+            split = False
 
 
         # if split: # clients = [client1, client2, ...] is a subset of clients in original group to be split as a new group
