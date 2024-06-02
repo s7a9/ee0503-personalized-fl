@@ -130,7 +130,6 @@ elif Ptype == 'server':
             # print(acc_clients)
             if len(client_clusters) == 2:
                 new_group = netserver.split_group(group, sid_clusters[1])
-            print("哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈")
             split = False
 
 
