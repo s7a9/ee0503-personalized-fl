@@ -18,15 +18,6 @@ Personalized Federated Learning
 5. Dataset.py: 数据接口（加入了noniid的参数，但是没有实现）
 6. main.py: 主
 
-## 聚类和平均模块
-Guoqinlu：安排了基本的模块暂时，model在Model中
-
-## 传输
-Guoqinlu：main里面加入了相应的IP等等的预制，可以参考着改一下；
-
-## noniid
-Guoqinlu: main里面的dataload，可以实现在dataset.py里，具体我在助教的基础上加了一个noniid=True参数；
-
 ## Requirements
 
 python-socketio
