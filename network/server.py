@@ -82,6 +82,7 @@ class NetworkServer:
             group.remove_client(client)
             new_group.add_client(client)
         self.groups[new_group.gid] = new_group
+        return new_group
 
     def find_client_group(self, sid):
         for gid, group in self.groups.items():

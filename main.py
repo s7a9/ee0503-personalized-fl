@@ -61,7 +61,7 @@ if Ptype == 'client':
             # idnum = ID
             client = Client(Model, optimizer, data_set, data_loader, idnum)
     
-        client.compute_weight_update(epochs=5) # need for change
+        client.compute_weight_update(epochs=1) # need for change
         print("test accuracy:" , client.evaluate())
         trained_data = client_to_bytes(client)
         
@@ -91,12 +91,17 @@ elif Ptype == 'server':
         for sids, datas in group.client_data.items():
             clients.append(bytes_to_client(datas, optimizer, data_set, data_loader, idnum))
             matchs.append(sids)
+        if new_group != None:
+            for sids, datas in new_group.client_data.items():
+                clients.append(bytes_to_client(datas, optimizer, data_set, data_loader, idnum))
+                matchs.append(sids)
 
         # Example: model[0] = bytes_to_model(group.client_data[0]['model'])
         # TODO 2: Check the necessity of clustering
-        split = False
+        split = True
         # clients = []
         new_group = None
+
         # TODO 3: If necessary, call server.split_group(group, clients) to split the group
         if split:
             cluster_indices = [np.arange(len(clients)).astype("int")]
@@ -108,9 +113,9 @@ elif Ptype == 'server':
                 max_norm = server.compute_max_update_norm([clients[i] for i in idc])
                 mean_norm = server.compute_mean_update_norm([clients[i] for i in idc])
              
-                if mean_norm<EPS_1 and max_norm>EPS_2 and len(idc)>2:
-            
-                    server.cache_model(idc, clients[idc[0]].W, acc_clients)
+                # if mean_norm<EPS_1 and max_norm>EPS_2 and len(idc)>2:
+                if True:
+                    # server.cache_model(idc, clients[idc[0]].W, acc_clients)
             
                     c1, c2 = server.cluster_clients(similarities[idc][:,idc]) 
                     cluster_indices_new += [c1, c2]
@@ -120,26 +125,38 @@ elif Ptype == 'server':
         
             cluster_indices = cluster_indices_new
             client_clusters = [[clients[i] for i in idcs] for idcs in cluster_indices]
-
+            sid_clusters = [[matchs[i] for i in idcs] for idcs in cluster_indices]
+            
             server.aggregate_clusterwise(client_clusters)
 
             acc_clients = [client.evaluate() for client in clients]
-            print(acc_clients)
-        
+            # print(acc_clients)
+            if len(client_clusters) == 2:
+                new_group = netserver.split_group(group, sid_clusters[1])
+
+
         # if split: # clients = [client1, client2, ...] is a subset of clients in original group to be split as a new group
         #     new_group = netserver.split_group(group, clients)
 
         # TODO 4: Average the parameters and update the model
-        averaged_weights = server.average_client_weights(clients)
+
+
+        averaged_weights = server.average_client_weights(client_clusters[0])
         server.load_average_weights(averaged_weights)
         averaged_client =  Client(Model, optimizer, data_set, data_loader, idnum)
-        print("test accuracy:" , averaged_client.evaluate())
         data = averaged_client.weight_receive(averaged_weights)
         
         # 5: Convert data to bytes and start next round of training
         group.start_train(data)
-        if new_group is not None:
-            new_group.start_train(data)
+        if len(client_clusters) == 1:
+            print("test accuracy:" , averaged_client.evaluate())
+        else:
+            new_averaged_weights = server.average_client_weights(client_clusters[1])
+            server.load_average_weights(new_averaged_weights)
+            new_averaged_client =  Client(Model, optimizer, data_set, data_loader, idnum)
+            print("test accuracy:" , averaged_client.evaluate(), " and ",new_averaged_client.evaluate())
+            new_data = new_averaged_client.weight_receive(new_averaged_weights)
+            new_group.start_train(new_data)
 
     def create_data_callback():
         """
