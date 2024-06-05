@@ -51,9 +51,30 @@ class Cifar100Dataset(Dataset):
     def __len__(self):
         return len(self.labels)
 
+class Cifar100DatasetNonIID(Dataset):
+    def __init__(self, dir, is_train, client_id) -> None:
+        super().__init__()
+        train_test = 'train' if is_train else 'test'
+        filename = os.path.join(dir, train_test, f'{client_id}.npz')
+        with open(filename, 'rb') as f:
+            data = np.load(f, allow_pickle=True)['data'].tolist()
+        self.data = data['x']
+        self.labels = data['y']
+    
+    def __getitem__(self, idx):
+        return torch.tensor(self.data[idx]).float()/255., self.labels[idx]
+
+    def __len__(self):
+        return len(self.labels)
+
 if __name__=="__main__":
     root="../data/cifar-100-python"
     train_set = Cifar100Dataset(root=root, is_train=True,noniid=True)
     val_set = Cifar100Dataset(root=root, is_train=False,noniid=True)
     train_loader = DataLoader(train_set,shuffle=True,batch_size=32,pin_memory=True,num_workers=4)
     val_loader = DataLoader(val_set,shuffle=False,batch_size=32)
+
+    non_iid_dir = '../data/Cifar100'
+    client_id = 0
+    train_set = Cifar100DatasetNonIID(non_iid_dir, is_train=True, client_id=client_id)
+    val_set = Cifar100DatasetNonIID(non_iid_dir, is_train=False, client_id=client_id)

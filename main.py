@@ -3,7 +3,7 @@ import torch
 import numpy as np
 from Model import Model
 from ServerClient import *
-from Dataset import Cifar100Dataset
+from Dataset import Cifar100Dataset, Cifar100DatasetNonIID
 from network.server import NetworkServer
 from network.client import run_client, send_data
 from utils.serialize import *
@@ -41,9 +41,12 @@ EPS_2 = 1.6
 # noniid分布处理 # 陈
 
 # dataset
-root="../data/cifar-100-python"
-train_set = Cifar100Dataset(root=root, is_train=True, noniid = noniid) # 引入了noniid参数
-val_set = Cifar100Dataset(root=root, is_train=False, noniid = noniid)
+# root="../data/cifar-100-python"
+# train_set = Cifar100Dataset(root=root, is_train=True, noniid = noniid) # 引入了noniid参数
+# val_set = Cifar100Dataset(root=root, is_train=False, noniid = noniid)
+root="../data/Cifar100"
+train_set = Cifar100DatasetNonIID(root, is_train=True, client_id=ID)
+val_set = Cifar100DatasetNonIID(root, is_train=False, client_id=ID)
     
 train_loader = DataLoader(train_set,
                                 shuffle=True,
@@ -74,7 +77,7 @@ if Ptype == 'client':
             # idnum = ID
             client = Client(Model, optimizer, data_set, data_loader, idnum)
     
-        client.compute_weight_update(epochs=1) # need for change
+        client.compute_weight_update(epochs=2) # need for change
         print("test accuracy:" , client.evaluate())
         trained_data = client_to_bytes(client)
         
@@ -159,12 +162,13 @@ elif Ptype == 'server':
         # 5: Convert data to bytes and start next round of training
         group.start_train(data)
         if len(client_clusters) == 1:
-            print("test accuracy:" , averaged_client.evaluate())
+            # print("test accuracy:" , averaged_client.evaluate())
+            pass
         else:
             new_averaged_weights = server.average_client_weights(client_clusters[1])
             server.load_average_weights(new_averaged_weights)
             new_averaged_client =  Client(Model, optimizer, data_set, data_loader, idnum)
-            print("test accuracy:" , averaged_client.evaluate(), " and ",new_averaged_client.evaluate())
+            # print("test accuracy:" , averaged_client.evaluate(), " and ",new_averaged_client.evaluate())
             new_data = new_averaged_client.weight_receive(new_averaged_weights)
             new_group.start_train(new_data)
 
