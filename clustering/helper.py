@@ -36,7 +36,7 @@ def display_train_stats(cfl_stats, baseline, eps_1, eps_2, communication_rounds)
     plt.ylabel("Accuracy")
     
     plt.xlim(0, communication_rounds)
-    plt.ylim(0,0.3)
+    plt.ylim(0,1)
     
     plt.subplot(1,2,2)
     
