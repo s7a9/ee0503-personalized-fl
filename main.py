@@ -43,7 +43,7 @@ EPS_2 = 1.6
 # dataset
 root="../data/cifar-100-python"
 train_set = Cifar100Dataset(root=root, is_train=True, noniid = noniid) # 引入了noniid参数
-val_set = Cifar100Dataset(root=root, is_train=False)
+val_set = Cifar100Dataset(root=root, is_train=False, noniid = noniid)
     
 train_loader = DataLoader(train_set,
                                 shuffle=True,

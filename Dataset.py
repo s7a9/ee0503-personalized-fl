@@ -31,6 +31,8 @@ def build_data(root="../data/cifar-100-python",is_train=True, noniid = False):
             train_data, train_labels = noniid_train(train_data, train_labels)
     else:
         test_data, test_labels = preprocess(test_dict[b"data"], test_dict[b"fine_labels"])
+        if noniid:
+            train_data, train_labels = noniid_train(train_data, train_labels)
     return train_data, train_labels, test_data, test_labels
 
 class Cifar100Dataset(Dataset):
@@ -52,6 +54,6 @@ class Cifar100Dataset(Dataset):
 if __name__=="__main__":
     root="../data/cifar-100-python"
     train_set = Cifar100Dataset(root=root, is_train=True,noniid=True)
-    val_set = Cifar100Dataset(root=root, is_train=False)
+    val_set = Cifar100Dataset(root=root, is_train=False,noniid=True)
     train_loader = DataLoader(train_set,shuffle=True,batch_size=32,pin_memory=True,num_workers=4)
     val_loader = DataLoader(val_set,shuffle=False,batch_size=32)
