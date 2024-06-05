@@ -29,14 +29,14 @@ def display_train_stats(cfl_stats, baseline, eps_1, eps_2, communication_rounds)
             plt.axvline(x=s, linestyle="-", color="k", label=r"Split")
     
     
-    plt.text(x=communication_rounds, y=1, ha="right", va="top", 
+    plt.text(x=communication_rounds, y=0.5, ha="right", va="top", 
              s="Clusters: {}".format([x.tolist() for x in cfl_stats.clusters[-1]]))
     
     plt.xlabel("Communication Rounds")
     plt.ylabel("Accuracy")
     
     plt.xlim(0, communication_rounds)
-    plt.ylim(0,1)
+    plt.ylim(0,0.4)
     
     plt.subplot(1,2,2)
     
