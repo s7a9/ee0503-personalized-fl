@@ -46,7 +46,7 @@ Round = 0
 # root="../data/cifar-100-python"
 # train_set = Cifar100Dataset(root=root, is_train=True, noniid = noniid) # 引入了noniid参数
 # val_set = Cifar100Dataset(root=root, is_train=False, noniid = noniid)
-root="../data/Cifar100"
+root="../noniid-cifar100"
 train_set = Cifar100DatasetNonIID(root, is_train=True, client_id=ID)
 val_set = Cifar100DatasetNonIID(root, is_train=False, client_id=ID)
     
@@ -79,7 +79,7 @@ if Ptype == 'client':
             # idnum = ID
             client = Client(Model, optimizer, data_set, data_loader, idnum)
     
-        client.compute_weight_update(epochs=2) # need for change
+        client.compute_weight_update(epochs=1) # need for change
         print("test accuracy:" , client.evaluate())
         trained_data = client_to_bytes(client)
         
