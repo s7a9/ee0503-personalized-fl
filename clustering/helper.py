@@ -24,19 +24,20 @@ def display_train_stats(cfl_stats, baseline, eps_1, eps_2, communication_rounds)
     plt.plot(cfl_stats.rounds, acc_mean, color="C0")
     plt.plot(cfl_stats.rounds, baseline, color="C1")
     
+    
     if "split" in cfl_stats.__dict__:
         for s in cfl_stats.split:
             plt.axvline(x=s, linestyle="-", color="k", label=r"Split")
     
     
-    plt.text(x=communication_rounds, y=0.5, ha="right", va="top", 
+    plt.text(x=communication_rounds, y=0.2, ha="right", va="top", 
              s="Clusters: {}".format([x.tolist() for x in cfl_stats.clusters[-1]]))
     
     plt.xlabel("Communication Rounds")
     plt.ylabel("Accuracy")
     
     plt.xlim(0, communication_rounds)
-    plt.ylim(0,0.4)
+    plt.ylim(0,0.15)
     
     plt.subplot(1,2,2)
     
