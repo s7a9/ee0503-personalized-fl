@@ -112,6 +112,22 @@ class Client(FederatedTrainingDevice):
 
     def reset(self): 
         copy(target=self.W, source=self.W_old)
+        
+    def copy_client(self):
+        new_client = Client(model_fn=type(self.model), 
+                            optimizer_fn=type(self.optimizer), 
+                            data=self.data, 
+                            idnum=self.id, 
+                            batch_size=self.train_loader.batch_size, 
+                            train_frac=len(self.train_loader.dataset) / len(self.data))
+        
+        new_client.W = {key: value.clone() for key, value in self.W.items()}
+        new_client.dW = {key: value.clone() for key, value in self.dW.items()}
+        new_client.W_old = {key: value.clone() for key, value in self.W_old.items()}
+        
+        new_client.optimizer.load_state_dict(self.optimizer.state_dict())
+        
+        return new_client
     
     
 class Server(FederatedTrainingDevice):

@@ -2,11 +2,6 @@ import numpy as np
 from torch.utils.data import Subset
 
 def split_noniid(train_idcs, train_labels, alpha, n_clients):
-    '''
-    Splits a list of data indices with corresponding labels
-    into subsets according to a dirichlet distribution with parameter
-    alpha
-    '''
     n_classes = train_labels.max()+1
     label_distribution = np.random.dirichlet([alpha]*n_clients, n_classes)
 
