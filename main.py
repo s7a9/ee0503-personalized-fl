@@ -22,6 +22,7 @@ ID = args.ID
 Host_IP = args.host
 Host_Port = args.p
 Ptype = args.type
+ClusteringRound = args.round
 if args.clustering == "on":
     split = True
 else:
@@ -36,6 +37,7 @@ else:
 batch_size = 128
 EPS_1 = 0.4
 EPS_2 = 1.6
+Round = 0
 
 ##########################################
 # noniid分布处理 # 陈
@@ -112,12 +114,13 @@ elif Ptype == 'server':
         # TODO 2: Check the necessity of clustering
         # clients = []
         global split
+        global Round
         new_group = None
         cluster_indices = [np.arange(len(clients)).astype("int")]
         client_clusters = [[clients[i] for i in idcs] for idcs in cluster_indices]
 
         # TODO 3: If necessary, call server.split_group(group, clients) to split the group
-        if split:
+        if split and Round>ClusteringRound:
             participating_clients = server.select_clients(clients, frac=1.0)
             similarities = server.compute_pairwise_similarities(clients)
             cluster_indices_new = []
@@ -171,6 +174,8 @@ elif Ptype == 'server':
             # print("test accuracy:" , averaged_client.evaluate(), " and ",new_averaged_client.evaluate())
             new_data = new_averaged_client.weight_receive(new_averaged_weights)
             new_group.start_train(new_data)
+            
+        Round +=1
 
     def create_data_callback():
         """

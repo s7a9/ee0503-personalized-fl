@@ -22,17 +22,16 @@ def split_noniid(train_idcs, train_labels, alpha, n_clients):
 
     min_length = min(len(idcs) for idcs in client_idcs)
     client_idcs = [idcs[:min_length] for idcs in client_idcs]
-    # 长度统一
   
     return client_idcs
 
 
-def noniid_train(x_train, y_train, num_clients=2, alpha=1.0):
-    train_idcs = np.random.permutation(len(x_train))
+# def noniid_train(x_train, y_train, num_clients=2, alpha=1.0):
+#     train_idcs = np.random.permutation(len(x_train))
 
-    train_labels = y_train[train_idcs]
-    client_idcs = split_noniid(train_idcs, train_labels, alpha, num_clients)
+#     train_labels = y_train[train_idcs]
+#     client_idcs = split_noniid(train_idcs, train_labels, alpha, num_clients)
 
-    combined_client_idcs = np.concatenate(client_idcs)
+#     combined_client_idcs = np.concatenate(client_idcs)
 
-    return x_train[combined_client_idcs], y_train[combined_client_idcs]
+#     return x_train[combined_client_idcs], y_train[combined_client_idcs]
